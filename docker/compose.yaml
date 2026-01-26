@@ -5,10 +5,10 @@ services:
     image: localstack/localstack:latest
     container_name: localstack_main
     ports:
-      - "4566:4566"            # Порт, через який ми будемо стукати
+      - "4566:4566"
     environment:
-      - SERVICES=s3            # Кажемо емулювати тільки S3 (щоб не вантажити комп)
-      - DEBUG=1                # Щоб бачити в логах, що відбувається
+      - SERVICES=s3
+      - DEBUG=1
       - DATA_DIR=/tmp/localstack/data
     volumes:
-      - "./.localstack:/var/lib/localstack" # Щоб файли не зникали після перезапуску
+      - "./.localstack:/var/lib/localstack"
