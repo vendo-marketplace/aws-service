@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack_main
+    ports:
+      - "4566:4566"            # Порт, через який ми будемо стукати
+    environment:
+      - SERVICES=s3            # Кажемо емулювати тільки S3 (щоб не вантажити комп)
+      - DEBUG=1                # Щоб бачити в логах, що відбувається
+      - DATA_DIR=/tmp/localstack/data
+    volumes:
+      - "./.localstack:/var/lib/localstack" # Щоб файли не зникали після перезапуску

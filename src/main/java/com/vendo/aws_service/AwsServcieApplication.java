@@ -1,4 +1,4 @@
-package com.vendo.aws_servcie;
+package com.vendo.aws_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

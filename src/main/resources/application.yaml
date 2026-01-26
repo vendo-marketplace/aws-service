@@ -5,3 +5,24 @@ spring:
     active: ${APP_PROFILE}
   config:
     import: "optional:configserver:${CONFIG_SERVER_URL}"
+
+server:
+  port: 8080
+  url: http://localhost:8080
+
+aws:
+  access-key: "TEST_ACCESS_KEY"
+  secret-key: "TEST_SECRET_KEY"
+  region: "us-east-1"
+  s3:
+    bucket-name: "vendo-test-bucket"
+    endpoint: "http://localhost:4566"
+
+kafka:
+  events:
+    aws-command-event:
+      topic: "AWS_COMMAND_TOPIC"
+      groupId: "aws_service_group"
+      container-factory: "kafkaListenerContainerFactory"
+      properties:
+        auto-offset-reset: "earliest"
