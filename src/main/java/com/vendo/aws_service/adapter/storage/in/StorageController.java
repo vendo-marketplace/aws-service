@@ -21,6 +21,8 @@ class StorageController {
 
     private final StorageUseCase useCase;
 
+    // TODO add auth and rate limits
+
     @PostMapping("/presigned")
     ResponseEntity<PresignedResponse> presigned(@Valid @RequestBody PresignedRequest request) {
         List<PresignedBody> presignedBodies = useCase.presign(request.type(), request.files());

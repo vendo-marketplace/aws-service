@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class FileExceptionHandler {
 
     @ExceptionHandler({InvalidFileTypeException.class, FileSizeExceededException.class})
-    public ResponseEntity<ExceptionResponse> handleInvalidFileTypeException(InvalidFileTypeException e, HttpServletRequest request) {
+    public ResponseEntity<ExceptionResponse> handleFileException(Exception e, HttpServletRequest request) {
         ExceptionResponse exceptionResponse = ExceptionResponse.builder()
                 .message(e.getMessage())
                 .code(HttpStatus.BAD_REQUEST.value())
