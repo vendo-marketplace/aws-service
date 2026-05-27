@@ -1,12 +1,16 @@
 package com.vendo.aws_service.adapter.storage.in;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vendo.aws_service.adapter.security.out.jwt.parser.TokenClaims;
 import com.vendo.aws_service.adapter.storage.in.dto.PresignedRequest;
 import com.vendo.aws_service.adapter.storage.in.dto.PresignedResponse;
 import com.vendo.aws_service.domain.file.File;
 import com.vendo.aws_service.domain.storage.dto.PresignedBody;
 import com.vendo.aws_service.domain.storage.type.ContextType;
 import com.vendo.aws_service.port.storage.PresignQueryPort;
+import com.vendo.aws_service.test_utils.security.SecurityContextService;
+import com.vendo.user_lib.type.UserRole;
+import com.vendo.user_lib.type.UserStatus;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +25,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,6 +44,10 @@ public class StorageControllerIntegrationTests {
     @MockitoBean
     private PresignQueryPort presignQueryPort;
 
+    private TokenClaims buildTokenClaims(UserRole role) {
+        return new TokenClaims("id", UserStatus.ACTIVE, List.of(role.name()), true);
+    }
+
     @Nested
     class PresignedTests {
 
@@ -47,10 +56,12 @@ public class StorageControllerIntegrationTests {
             File file = new File("id", 50_000L, "image/jpg");
             PresignedRequest request = new PresignedRequest(ContextType.PRODUCT, List.of(file));
             PresignedBody presignedBody = new PresignedBody(file.id(), "url", "products/uuid");
+            TokenClaims claims = buildTokenClaims(UserRole.USER);
 
             when(presignQueryPort.presign(request.type(), file)).thenReturn(presignedBody);
 
             String content = mockMvc.perform(post("/storage/presigned")
+                            .with(authentication(SecurityContextService.initializeAuth(claims)))
                             .content(objectMapper.writeValueAsString(request))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
@@ -61,7 +72,14 @@ public class StorageControllerIntegrationTests {
             assertThat(content).isNotBlank();
 
             PresignedResponse presignedResponse = objectMapper.readValue(content, PresignedResponse.class);
-            System.out.println(presignedResponse);
+            assertThat(presignedResponse.files()).isNotNull();
+            assertThat(presignedResponse.files().size()).isEqualTo(1);
+            assertThat(presignedResponse.files().get(0)).isEqualTo(file);
+        }
+
+        @Test
+        void void_presigned_shouldReturnUnauthorized_whenNoToken() {
+
         }
 
         @Test
