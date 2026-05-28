@@ -1,4 +1,4 @@
-package com.vendo.aws_servcie.common.config;
+package com.vendo.aws_service.infrastructure.docs;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

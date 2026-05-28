@@ -1,0 +1,24 @@
+server:
+  url: server_test_url
+
+security:
+  jwt:
+    internal:
+      key: internalKeyinternalKeyinternalKeyinternalKey
+    secret:
+      key: secretKeysecretKeysecretKeysecretKeysecretKey
+
+eureka:
+  client:
+    enabled: false
+
+aws:
+  access-key: accessKey
+  secret-key: secretKey
+  region: eu
+  s3:
+    bucket-name: bucketName
+  presign:
+    expiration: 600
+  file:
+    max-size: 8000000

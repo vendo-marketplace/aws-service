@@ -1,4 +1,4 @@
-package com.vendo.aws_servcie.common.config;
+package com.vendo.aws_service.infrastructure.discovery;
 
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Configuration;
