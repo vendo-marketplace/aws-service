@@ -1,4 +1,4 @@
-package com.vendo.aws_service.adapter.storage.out.spring.exception.formatter;
+package com.vendo.aws_service.adapter.spring.in.exception.formatter;
 
 import com.vendo.core_lib.util.FieldNormalizer;
 import org.springframework.stereotype.Component;

@@ -75,7 +75,7 @@ adapter.out
 src
  └── main
      └── java
-         └── com.vendo.product_service
+         └── com.vendo.aws_service
              ├── adapter
              │   └── storage
              │       └── in
@@ -152,7 +152,7 @@ java -jar target/aws-service.jar
 Swagger UI:
 
 ```
-http://localhost:9010/swagger-ui.html
+http://localhost:9010/swagger-ui/index.html
 ```
 
 OpenAPI specification:

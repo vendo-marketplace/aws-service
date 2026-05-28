@@ -1,4 +1,4 @@
-package com.vendo.aws_service.adapter.storage.out.spring.exception;
+package com.vendo.aws_service.adapter.spring.in.exception;
 
 import com.vendo.core_lib.util.FieldNormalizer;
 import lombok.RequiredArgsConstructor;

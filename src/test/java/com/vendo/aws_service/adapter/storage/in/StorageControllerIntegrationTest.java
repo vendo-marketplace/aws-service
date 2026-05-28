@@ -31,11 +31,10 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class StorageControllerIntegrationTests {
+public class StorageControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -166,7 +165,7 @@ public class StorageControllerIntegrationTests {
 
         @Test
         void presigned_shouldReturnBadRequest_whenFileTypeIsNotImage() throws Exception {
-            File file = new File("id2", 1_000_000L, "video/mp4");
+            File file = new File("id", 1_000_000L, "video/mp4");
             PresignedRequest request = new PresignedRequest(ContextType.PRODUCT, List.of(file));
             TokenClaims claims = buildTokenClaims(UserRole.USER);
 
