@@ -1,5 +1,6 @@
 package com.vendo.aws_service.adapter.storage.in;
 
+import com.vendo.aws_service.adapter.file.out.mapper.FileDtoMapper;
 import com.vendo.aws_service.adapter.storage.in.dto.PresignedRequest;
 import com.vendo.aws_service.adapter.storage.in.dto.PresignedResponse;
 import com.vendo.aws_service.domain.storage.dto.PresignedBody;
@@ -21,11 +22,13 @@ import java.util.List;
 @PreAuthorize("@userSecurity.validateActivation(authentication)")
 class StorageController {
 
+    private final FileDtoMapper mapper;
+
     private final StorageUseCase useCase;
 
     @PostMapping("/presigned")
     ResponseEntity<PresignedResponse> presigned(@Valid @RequestBody PresignedRequest request) {
-        List<PresignedBody> presignedBodies = useCase.presign(request.type(), request.files());
+        List<PresignedBody> presignedBodies = useCase.presign(request.type(), mapper.toFiles(request.files()));
         return ResponseEntity.ok(PresignedResponse.of(presignedBodies));
     }
 

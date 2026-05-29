@@ -1,6 +1,5 @@
 package com.vendo.aws_service.adapter.spring.in.exception;
 
-import com.vendo.core_lib.util.FieldNormalizer;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSourceResolvable;
@@ -17,12 +16,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ValidationErrorConverter {
 
-    private final FieldNormalizer<String, String> fieldNormalizer;
-
     public Map<String, String> fromField(List<FieldError> fieldErrors) {
         return fieldErrors.stream()
                 .collect(Collectors.toMap(
-                        fieldError -> fieldNormalizer.normalize(fieldError.getField()),
+                        FieldError::getField,
                         fieldError -> StringUtils.defaultIfEmpty(fieldError.getDefaultMessage(),
                                 "No error message."))
                 );

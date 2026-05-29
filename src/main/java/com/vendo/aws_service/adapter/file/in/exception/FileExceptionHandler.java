@@ -1,5 +1,6 @@
 package com.vendo.aws_service.adapter.file.in.exception;
 
+import com.vendo.aws_service.domain.file.exception.DuplicateFileIdException;
 import com.vendo.aws_service.domain.file.exception.FileSizeExceededException;
 import com.vendo.aws_service.domain.file.exception.InvalidFileTypeException;
 import com.vendo.security_lib.exception.response.ExceptionResponse;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class FileExceptionHandler {
 
-    @ExceptionHandler({InvalidFileTypeException.class, FileSizeExceededException.class})
+    @ExceptionHandler({InvalidFileTypeException.class, FileSizeExceededException.class, DuplicateFileIdException.class})
     public ResponseEntity<ExceptionResponse> handleFileException(Exception e, HttpServletRequest request) {
         ExceptionResponse exceptionResponse = ExceptionResponse.builder()
                 .message(e.getMessage())

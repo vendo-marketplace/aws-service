@@ -17,7 +17,6 @@ public class AwsProps {
 
     private S3 s3;
     private Presign presign;
-    private File file;
 
     @Getter
     @Setter
@@ -29,11 +28,5 @@ public class AwsProps {
     @Setter
     public static class Presign {
         private long expiration;
-    }
-
-    @Getter
-    @Setter
-    public static class File {
-        private long maxSize;
     }
 }
