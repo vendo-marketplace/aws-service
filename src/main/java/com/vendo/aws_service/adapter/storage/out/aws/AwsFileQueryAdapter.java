@@ -26,7 +26,6 @@ public class AwsFileQueryAdapter implements PresignQueryPort {
     private final FileExtensionParser extensionParser;
 
     private static final String SLASH_DELIMITER = "/";
-    private static final String DOT_DELIMITER = ".";
 
     @Override
     public PresignedBody presign(ContextType type, File file) {
@@ -58,6 +57,6 @@ public class AwsFileQueryAdapter implements PresignQueryPort {
 
     private String generateFilename(String contentType) {
         String extension = extensionParser.parse(contentType);
-        return (UUID.randomUUID() + DOT_DELIMITER).concat(extension);
+        return String.valueOf((UUID.randomUUID())).concat(extension);
     }
 }
