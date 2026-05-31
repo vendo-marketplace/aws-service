@@ -1,7 +1,8 @@
 package com.vendo.aws_service.adapter.security.out.config;
 
 import com.vendo.aws_service.adapter.security.in.filter.JwtAuthFilter;
-import com.vendo.aws_service.adapter.security.in.filter.exception.JwtAuthenticationEntryPoint;
+import com.vendo.aws_service.adapter.security.out.exception.JwtAccessDeniedHandler;
+import com.vendo.aws_service.adapter.security.out.exception.JwtAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +25,7 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
 
     private final JwtAuthenticationEntryPoint authenticationEntryPoint;
+    private final JwtAccessDeniedHandler accessDeniedHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -32,6 +34,7 @@ public class SecurityConfig {
                 .anonymous(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .exceptionHandling(configurer -> configurer
+                        .accessDeniedHandler(accessDeniedHandler)
                         .authenticationEntryPoint(authenticationEntryPoint))
                 .sessionManagement(sessionManager -> sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth

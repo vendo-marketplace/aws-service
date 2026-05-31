@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/storage")
-@PreAuthorize("@userSecurity.validateActivation(authentication)")
+@PreAuthorize("@userSecurity.hasAccess()")
 class StorageController {
 
     private final FileDtoMapper mapper;

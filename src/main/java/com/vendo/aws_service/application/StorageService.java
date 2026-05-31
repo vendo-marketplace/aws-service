@@ -5,6 +5,8 @@ import com.vendo.aws_service.domain.file.exception.InvalidFileTypeException;
 import com.vendo.aws_service.domain.storage.type.ContextType;
 import com.vendo.aws_service.domain.file.File;
 import com.vendo.aws_service.domain.storage.dto.PresignedBody;
+import com.vendo.aws_service.domain.user.User;
+import com.vendo.aws_service.port.auth.AuthenticationService;
 import com.vendo.aws_service.port.file.FileValidationPort;
 import com.vendo.aws_service.port.storage.PresignQueryPort;
 import com.vendo.aws_service.port.storage.StorageUseCase;
@@ -21,9 +23,13 @@ public class StorageService implements StorageUseCase {
 
     private final PresignQueryPort presignQueryPort;
     private final FileValidationPort fileValidationPort;
+    private final AuthenticationService authenticationService;
 
     @Override
     public List<PresignedBody> presign(ContextType type, List<File> files) {
+        User authUser = authenticationService.getAuthUser();
+        authUser.throwIfEmailNotVerified();
+
         validateFiles(files);
         return files.stream()
                 .map(file -> presignQueryPort.presign(type, file))

@@ -2,7 +2,9 @@ package com.vendo.aws_service.adapter.security.out.jwt.parser;
 
 import com.vendo.aws_service.adapter.security.out.jwt.JwtService;
 import com.vendo.aws_service.adapter.security.out.props.JwtProperties;
+import com.vendo.aws_service.domain.user.User;
 import com.vendo.security_lib.type.UserTokenClaim;
+import com.vendo.user_lib.type.UserRole;
 import com.vendo.user_lib.type.UserStatus;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -16,23 +18,23 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class JwtClaimsParser implements TokenClaimsParser {
+public class JwtAuthenticationParser implements AuthenticationParser {
 
     private final JwtService jwtService;
 
     private final JwtProperties jwtProperties;
 
     @Override
-    public TokenClaims extract(String token) {
+    public User extract(String token) {
         Claims claims = jwtService.extractAllClaims(token, jwtProperties.getSecret().key());
 
         String id = extractId(claims);
-        List<String> roles = extractRoles(claims, UserTokenClaim.ROLES.getClaim());
+        List<UserRole> roles = extractRoles(claims, UserTokenClaim.ROLES.getClaim());
 
         Boolean verification = extractEmailVerification(claims);
         UserStatus status = extractStatus(claims);
 
-        return new TokenClaims(id, status, roles, verification);
+        return new User(id, status, roles, verification);
     }
 
     private String extractId(Claims claims) {
@@ -46,7 +48,7 @@ public class JwtClaimsParser implements TokenClaimsParser {
         return id;
     }
 
-    private List<String> extractRoles(Claims claims, String rolesClaim) {
+    private List<UserRole> extractRoles(Claims claims, String rolesClaim) {
         Object rawRoles = claims.get(rolesClaim);
         AuthenticationException e = new BadCredentialsException("Invalid token.");
 
@@ -55,6 +57,7 @@ public class JwtClaimsParser implements TokenClaimsParser {
 
                 return list.stream()
                         .map(String.class::cast)
+                        .map(UserRole::valueOf)
                         .toList();
             }
         }

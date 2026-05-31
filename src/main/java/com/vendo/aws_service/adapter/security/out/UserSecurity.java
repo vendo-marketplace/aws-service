@@ -1,25 +1,24 @@
 package com.vendo.aws_service.adapter.security.out;
 
-import com.vendo.aws_service.adapter.security.out.jwt.parser.TokenClaims;
-import com.vendo.user_lib.exception.UserBlockedException;
-import com.vendo.user_lib.exception.UserEmailNotVerifiedException;
-import com.vendo.user_lib.type.UserStatus;
-import org.springframework.security.core.Authentication;
+import com.vendo.aws_service.domain.user.User;
+import com.vendo.aws_service.port.auth.AuthenticationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class UserSecurity {
 
-    public void validateActivation(Authentication auth) {
-        TokenClaims claims = (TokenClaims) auth.getPrincipal();
+    private final AuthenticationService authenticationService;
 
-        if (claims.status() == UserStatus.BLOCKED) {
-            throw new UserBlockedException("User is blocked.");
+    public boolean hasAccess() {
+
+        try {
+            User authUser = authenticationService.getAuthUser();
+            authUser.throwIfBlocked();
+            return true;
+        } catch (Exception e) {
+            return false;
         }
-
-        if (!claims.emailVerified()) {
-            throw new UserEmailNotVerifiedException("User email is not verified.");
-        }
-
     }
 }
