@@ -1,6 +1,6 @@
 package com.vendo.aws_service.test_utils.security;
 
-import com.vendo.aws_service.adapter.security.out.jwt.parser.TokenClaims;
+import com.vendo.aws_service.adapter.security.in.filter.header.AuthenticatedUser;
 import com.vendo.user_lib.type.UserRole;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -10,12 +10,12 @@ import java.util.Collections;
 
 public class SecurityContextService {
 
-    public static Authentication initializeAuth(TokenClaims claims) {
-        String role = claims.roles().get(0);
+    public static Authentication initializeAuth(AuthenticatedUser user) {
+        String role = user.roles().get(0);
         if (role == null || role.isBlank()) role = UserRole.USER.name();
 
         return new UsernamePasswordAuthenticationToken(
-                claims,
+                user,
                 null,
                 Collections.singletonList(new SimpleGrantedAuthority(role))
         );

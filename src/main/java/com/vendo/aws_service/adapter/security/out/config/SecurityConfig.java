@@ -1,7 +1,7 @@
 package com.vendo.aws_service.adapter.security.out.config;
 
-import com.vendo.aws_service.adapter.security.in.filter.JwtAuthFilter;
-import com.vendo.aws_service.adapter.security.in.filter.exception.JwtAuthenticationEntryPoint;
+import com.vendo.aws_service.adapter.security.in.filter.UserContextFilter;
+import com.vendo.aws_service.adapter.security.in.filter.exception.UnauthorizedEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,9 +21,9 @@ import static com.vendo.aws_service.adapter.security.in.filter.AwsAntPathResolve
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthFilter jwtAuthFilter;
+    private final UserContextFilter userContextFilter;
 
-    private final JwtAuthenticationEntryPoint authenticationEntryPoint;
+    private final UnauthorizedEntryPoint authenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -38,7 +38,7 @@ public class SecurityConfig {
                         .requestMatchers(PERMITTED_PATHS).permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterAfter(jwtAuthFilter, ExceptionTranslationFilter.class);
+                .addFilterAfter(userContextFilter, ExceptionTranslationFilter.class);
 
         return http.build();
     }
