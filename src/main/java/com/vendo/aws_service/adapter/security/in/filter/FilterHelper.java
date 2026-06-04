@@ -1,14 +1,14 @@
 package com.vendo.aws_service.adapter.security.in.filter;
 
+import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 
+@NoArgsConstructor
 final class FilterHelper {
-
-    private FilterHelper() {}
 
     static void addAuthToContext(Object principal, List<String> roles) {
         UsernamePasswordAuthenticationToken authToken =

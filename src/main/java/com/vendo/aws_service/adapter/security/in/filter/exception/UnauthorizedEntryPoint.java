@@ -22,15 +22,14 @@ public class UnauthorizedEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
-        log.warn("Handling exception (no more authentication here): {}", exception.getMessage());
-
+        log.warn("Handling authentication exception: {}", exception.getMessage());
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         ExceptionResponse exceptionResponse = ExceptionResponse.builder()
                 .code(HttpServletResponse.SC_UNAUTHORIZED)
                 .path(request.getRequestURI())
-                .message(exception.getMessage())
+                .message("Unauthorized.")
                 .build();
 
         response.getWriter().write(objectMapper.writeValueAsString(exceptionResponse));
