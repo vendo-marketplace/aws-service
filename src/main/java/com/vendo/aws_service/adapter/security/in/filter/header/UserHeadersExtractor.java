@@ -1,5 +1,6 @@
 package com.vendo.aws_service.adapter.security.in.filter.header;
 
+import com.vendo.aws_service.domain.user.User;
 import com.vendo.user_lib.type.UserStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +18,8 @@ import static com.vendo.security_lib.type.UserHeaders.*;
 @Component
 public class UserHeadersExtractor {
 
-    public AuthenticatedUser extract(HttpServletRequest request) {
-        return AuthenticatedUser.builder()
+    public User extract(HttpServletRequest request) {
+        return User.builder()
                 .id(require(request, ID.getHeader()))
                 .email(request.getHeader(EMAIL.getHeader()))
                 .status(extractStatus(request.getHeader(STATUS.getHeader())))

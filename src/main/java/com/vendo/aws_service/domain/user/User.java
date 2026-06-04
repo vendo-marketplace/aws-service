@@ -1,4 +1,4 @@
-package com.vendo.aws_service.adapter.security.in.filter.header;
+package com.vendo.aws_service.domain.user;
 
 import com.vendo.user_lib.type.UserStatus;
 import lombok.Builder;
@@ -6,7 +6,7 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record AuthenticatedUser(
+public record User(
         String id,
         String email,
         UserStatus status,

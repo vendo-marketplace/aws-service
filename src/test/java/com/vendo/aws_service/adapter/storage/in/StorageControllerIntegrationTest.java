@@ -1,7 +1,7 @@
 package com.vendo.aws_service.adapter.storage.in;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vendo.aws_service.adapter.security.in.filter.header.AuthenticatedUser;
+import com.vendo.aws_service.domain.user.User;
 import com.vendo.aws_service.adapter.storage.in.dto.FileRequest;
 import com.vendo.aws_service.adapter.storage.in.dto.PresignedRequest;
 import com.vendo.aws_service.adapter.storage.in.dto.PresignedResponse;
@@ -48,8 +48,8 @@ public class StorageControllerIntegrationTest {
     @MockitoBean
     private PresignQueryPort presignQueryPort;
 
-    private AuthenticatedUser buildUser() {
-        return AuthenticatedUser.builder()
+    private User buildUser() {
+        return User.builder()
                 .id("id")
                 .email("user@vendo.com")
                 .status(UserStatus.ACTIVE)
@@ -66,7 +66,7 @@ public class StorageControllerIntegrationTest {
             FileRequest file = new FileRequest("id", 50_000L, "image/jpeg");
             PresignedRequest request = new PresignedRequest(ContextType.PRODUCT, List.of(file));
             PresignedBody presignedBody = new PresignedBody(file.id(), "url", "products/uuid");
-            AuthenticatedUser user = buildUser();
+            User user = buildUser();
             ArgumentCaptor<File> fileCaptor = ArgumentCaptor.forClass(File.class);
 
             when(presignQueryPort.presign(eq(request.type()), fileCaptor.capture())).thenReturn(presignedBody);
@@ -123,7 +123,7 @@ public class StorageControllerIntegrationTest {
         @Test
         void presigned_shouldReturnBadRequest_whenFilesAndTypeAreMissing() throws Exception {
             PresignedRequest request = new PresignedRequest(null, null);
-            AuthenticatedUser user = buildUser();
+            User user = buildUser();
 
             String content = mockMvc.perform(post("/storage/presigned")
                             .with(authentication(SecurityContextService.initializeAuth(user)))
@@ -156,7 +156,7 @@ public class StorageControllerIntegrationTest {
             FileRequest file2 = new FileRequest("id2", -1L, null);
             FileRequest file3 = new FileRequest("id3", 5_000_000L, "image/jpeg");
             PresignedRequest request = new PresignedRequest(ContextType.PRODUCT, List.of(file1, file2, file3));
-            AuthenticatedUser user = buildUser();
+            User user = buildUser();
 
             String content = mockMvc.perform(post("/storage/presigned")
                             .with(authentication(SecurityContextService.initializeAuth(user)))
@@ -189,7 +189,7 @@ public class StorageControllerIntegrationTest {
         void presigned_shouldReturnBadRequest_whenFileTypeIsNotImage() throws Exception {
             FileRequest file = new FileRequest("id", 1_000_000L, "video/mp4");
             PresignedRequest request = new PresignedRequest(ContextType.PRODUCT, List.of(file));
-            AuthenticatedUser user = buildUser();
+            User user = buildUser();
 
             String content = mockMvc.perform(post("/storage/presigned")
                             .with(authentication(SecurityContextService.initializeAuth(user)))
@@ -217,7 +217,7 @@ public class StorageControllerIntegrationTest {
         void presigned_shouldReturnBadRequest_whenInvalidImageExtension() throws Exception {
             FileRequest file = new FileRequest("id", 1_000_000L, "image/jjppeegg");
             PresignedRequest request = new PresignedRequest(ContextType.PRODUCT, List.of(file));
-            AuthenticatedUser user = buildUser();
+            User user = buildUser();
 
             String content = mockMvc.perform(post("/storage/presigned")
                             .with(authentication(SecurityContextService.initializeAuth(user)))
@@ -246,7 +246,7 @@ public class StorageControllerIntegrationTest {
             FileRequest file1 = new FileRequest("id", 5_000_000L, "image/jpeg");
             FileRequest file2 = new FileRequest("id", 5_000_000L, "image/jpeg");
             PresignedRequest request = new PresignedRequest(ContextType.PRODUCT, List.of(file1, file2));
-            AuthenticatedUser user = buildUser();
+            User user = buildUser();
 
             String content = mockMvc.perform(post("/storage/presigned")
                             .with(authentication(SecurityContextService.initializeAuth(user)))

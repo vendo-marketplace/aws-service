@@ -1,6 +1,6 @@
 package com.vendo.aws_service.adapter.security.in.filter;
 
-import com.vendo.aws_service.adapter.security.in.filter.header.AuthenticatedUser;
+import com.vendo.aws_service.domain.user.User;
 import com.vendo.aws_service.adapter.security.in.filter.header.UserHeadersExtractor;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -37,7 +37,7 @@ public class UserContextFilter extends OncePerRequestFilter {
         }
 
         try {
-            AuthenticatedUser user = userHeadersExtractor.extract(request);
+            User user = userHeadersExtractor.extract(request);
             FilterHelper.addAuthToContext(user, user.roles());
         } catch (AuthenticationException e) {
             SecurityContextHolder.clearContext();

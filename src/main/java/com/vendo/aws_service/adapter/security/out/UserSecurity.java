@@ -1,17 +1,20 @@
 package com.vendo.aws_service.adapter.security.out;
 
-import com.vendo.aws_service.adapter.security.in.filter.header.AuthenticatedUser;
+import com.vendo.aws_service.domain.user.User;
 import com.vendo.user_lib.exception.UserBlockedException;
 import com.vendo.user_lib.exception.UserEmailNotVerifiedException;
 import com.vendo.user_lib.type.UserStatus;
-import org.springframework.security.core.Authentication;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class UserSecurity {
 
-    public boolean validateActivation(Authentication auth) {
-        AuthenticatedUser user = (AuthenticatedUser) auth.getPrincipal();
+    private final SecurityContextHelper securityContextHelper;
+
+    public boolean validateActivation() {
+        User user = securityContextHelper.getCurrentUser();
 
         if (user.status() == UserStatus.BLOCKED) {
             throw new UserBlockedException("User is blocked.");

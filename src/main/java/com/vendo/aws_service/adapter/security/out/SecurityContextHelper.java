@@ -1,19 +1,21 @@
 package com.vendo.aws_service.adapter.security.out;
 
-import com.vendo.aws_service.adapter.security.in.filter.header.AuthenticatedUser;
+import com.vendo.aws_service.domain.user.User;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
+@Component
 public class SecurityContextHelper {
 
-    public static String getUserIdFromContext() {
+    public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !(authentication.getPrincipal() instanceof AuthenticatedUser user)) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof User user)) {
             throw new AuthenticationCredentialsNotFoundException("Unauthorized.");
         }
 
-        return user.id();
+        return user;
     }
 }
