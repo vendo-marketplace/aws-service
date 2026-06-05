@@ -268,5 +268,29 @@ public class StorageControllerIntegrationTest {
 
             verifyNoInteractions(presignQueryPort);
         }
+
+        @Test
+        void presigned_shouldReturnUnsupportedMediaType_whenContentTypeIsNotJson() throws Exception {
+            FileRequest file = new FileRequest("id", 50_000L, "image/jpeg");
+            PresignedRequest request = new PresignedRequest(ContextType.PRODUCT, List.of(file));
+            User user = buildUser();
+
+            String content = mockMvc.perform(post("/storage/presigned")
+                            .with(authentication(SecurityContextService.initializeAuth(user)))
+                            .content(objectMapper.writeValueAsString(request))
+                            .contentType(MediaType.TEXT_PLAIN))
+                    .andExpect(status().isUnsupportedMediaType())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+
+            ExceptionResponse exceptionResponse = objectMapper.readValue(content, ExceptionResponse.class);
+            assertThat(exceptionResponse).isNotNull();
+            assertThat(exceptionResponse.getCode()).isEqualTo(415);
+            assertThat(exceptionResponse.getMessage()).isEqualTo("Unsupported media type.");
+            assertThat(exceptionResponse.getPath()).isEqualTo("/storage/presigned");
+
+            verifyNoInteractions(presignQueryPort);
+        }
     }
 }
