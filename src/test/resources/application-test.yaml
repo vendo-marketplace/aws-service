@@ -22,3 +22,9 @@ aws:
     expiration: 600
   file:
     max-size: 8000000
+
+endpoints:
+  unauthenticated:
+    general:
+      - /actuator/health
+
