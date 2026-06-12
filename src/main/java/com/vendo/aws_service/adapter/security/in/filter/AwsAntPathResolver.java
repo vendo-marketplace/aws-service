@@ -1,24 +1,22 @@
 package com.vendo.aws_service.adapter.security.in.filter;
 
+import com.vendo.aws_service.infrastructure.props.PathProps;
 import com.vendo.security_lib.resolver.AntPathResolver;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 
 import java.util.Arrays;
 
 @Component
+@RequiredArgsConstructor
 public class AwsAntPathResolver implements AntPathResolver {
 
+    private final PathProps props;
     private static final AntPathMatcher antPathMatcher = new AntPathMatcher();
-
-    public static final String[] PERMITTED_PATHS = new String[] {
-            "/swagger-ui/**",
-            "/v3/api-docs/**",
-            "/actuator/health"
-    };
 
     @Override
     public boolean isPermittedPath(String path) {
-        return Arrays.stream(PERMITTED_PATHS).anyMatch(pr -> antPathMatcher.match(pr, path));
+        return Arrays.stream(props.allPaths()).anyMatch(pr -> antPathMatcher.match(pr, path));
     }
 }

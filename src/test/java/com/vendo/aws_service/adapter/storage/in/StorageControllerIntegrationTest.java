@@ -1,7 +1,7 @@
 package com.vendo.aws_service.adapter.storage.in;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vendo.aws_service.adapter.security.out.jwt.parser.TokenClaims;
+import com.vendo.aws_service.domain.user.User;
 import com.vendo.aws_service.adapter.storage.in.dto.FileRequest;
 import com.vendo.aws_service.adapter.storage.in.dto.PresignedRequest;
 import com.vendo.aws_service.adapter.storage.in.dto.PresignedResponse;
@@ -9,11 +9,10 @@ import com.vendo.aws_service.domain.file.File;
 import com.vendo.aws_service.domain.storage.dto.PresignedBody;
 import com.vendo.aws_service.domain.storage.type.ContextType;
 import com.vendo.aws_service.port.storage.PresignQueryPort;
-import com.vendo.aws_service.test_utils.security.SecurityContextService;
+import com.vendo.aws_service.test_utils.builder.UserDataBuilder;
+import com.vendo.aws_service.test_utils.security.SecurityContextTestService;
+import com.vendo.core_lib.utils.AssertionUtils;
 import com.vendo.security_lib.exception.response.ExceptionResponse;
-import com.vendo.user_lib.type.UserRole;
-import com.vendo.user_lib.type.UserStatus;
-import com.vendo.utils_lib.AssertionUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -48,10 +47,7 @@ public class StorageControllerIntegrationTest {
     @MockitoBean
     private PresignQueryPort presignQueryPort;
 
-    private TokenClaims buildTokenClaims(UserRole role) {
-        return new TokenClaims("id", UserStatus.ACTIVE, List.of(role.name()), true);
-    }
-
+    private final User user = UserDataBuilder.withAllFields().build();
     @Nested
     class PresignedTests {
 
@@ -60,13 +56,12 @@ public class StorageControllerIntegrationTest {
             FileRequest file = new FileRequest("id", 50_000L, "image/jpeg");
             PresignedRequest request = new PresignedRequest(ContextType.PRODUCT, List.of(file));
             PresignedBody presignedBody = new PresignedBody(file.id(), "url", "products/uuid");
-            TokenClaims claims = buildTokenClaims(UserRole.USER);
             ArgumentCaptor<File> fileCaptor = ArgumentCaptor.forClass(File.class);
 
             when(presignQueryPort.presign(eq(request.type()), fileCaptor.capture())).thenReturn(presignedBody);
 
             String content = mockMvc.perform(post("/storage/presigned")
-                            .with(authentication(SecurityContextService.initializeAuth(claims)))
+                            .with(authentication(SecurityContextTestService.initializeAuth(user)))
                             .content(objectMapper.writeValueAsString(request))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
@@ -117,10 +112,9 @@ public class StorageControllerIntegrationTest {
         @Test
         void presigned_shouldReturnBadRequest_whenFilesAndTypeAreMissing() throws Exception {
             PresignedRequest request = new PresignedRequest(null, null);
-            TokenClaims claims = buildTokenClaims(UserRole.USER);
 
             String content = mockMvc.perform(post("/storage/presigned")
-                            .with(authentication(SecurityContextService.initializeAuth(claims)))
+                            .with(authentication(SecurityContextTestService.initializeAuth(user)))
                             .content(objectMapper.writeValueAsString(request))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
@@ -150,10 +144,9 @@ public class StorageControllerIntegrationTest {
             FileRequest file2 = new FileRequest("id2", -1L, null);
             FileRequest file3 = new FileRequest("id3", 5_000_000L, "image/jpeg");
             PresignedRequest request = new PresignedRequest(ContextType.PRODUCT, List.of(file1, file2, file3));
-            TokenClaims claims = buildTokenClaims(UserRole.USER);
 
             String content = mockMvc.perform(post("/storage/presigned")
-                            .with(authentication(SecurityContextService.initializeAuth(claims)))
+                            .with(authentication(SecurityContextTestService.initializeAuth(user)))
                             .content(objectMapper.writeValueAsString(request))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
@@ -183,10 +176,9 @@ public class StorageControllerIntegrationTest {
         void presigned_shouldReturnBadRequest_whenFileTypeIsNotImage() throws Exception {
             FileRequest file = new FileRequest("id", 1_000_000L, "video/mp4");
             PresignedRequest request = new PresignedRequest(ContextType.PRODUCT, List.of(file));
-            TokenClaims claims = buildTokenClaims(UserRole.USER);
 
             String content = mockMvc.perform(post("/storage/presigned")
-                            .with(authentication(SecurityContextService.initializeAuth(claims)))
+                            .with(authentication(SecurityContextTestService.initializeAuth(user)))
                             .content(objectMapper.writeValueAsString(request))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
@@ -211,10 +203,9 @@ public class StorageControllerIntegrationTest {
         void presigned_shouldReturnBadRequest_whenInvalidImageExtension() throws Exception {
             FileRequest file = new FileRequest("id", 1_000_000L, "image/jjppeegg");
             PresignedRequest request = new PresignedRequest(ContextType.PRODUCT, List.of(file));
-            TokenClaims claims = buildTokenClaims(UserRole.USER);
 
             String content = mockMvc.perform(post("/storage/presigned")
-                            .with(authentication(SecurityContextService.initializeAuth(claims)))
+                            .with(authentication(SecurityContextTestService.initializeAuth(user)))
                             .content(objectMapper.writeValueAsString(request))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
@@ -240,10 +231,9 @@ public class StorageControllerIntegrationTest {
             FileRequest file1 = new FileRequest("id", 5_000_000L, "image/jpeg");
             FileRequest file2 = new FileRequest("id", 5_000_000L, "image/jpeg");
             PresignedRequest request = new PresignedRequest(ContextType.PRODUCT, List.of(file1, file2));
-            TokenClaims claims = buildTokenClaims(UserRole.USER);
 
             String content = mockMvc.perform(post("/storage/presigned")
-                            .with(authentication(SecurityContextService.initializeAuth(claims)))
+                            .with(authentication(SecurityContextTestService.initializeAuth(user)))
                             .content(objectMapper.writeValueAsString(request))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
@@ -258,6 +248,29 @@ public class StorageControllerIntegrationTest {
             assertThat(exceptionResponse.getTimestamp()).isNotNull();
             assertThat(exceptionResponse.getCode()).isEqualTo(400);
             assertThat(exceptionResponse.getMessage()).isEqualTo("File ids must be unique.");
+            assertThat(exceptionResponse.getPath()).isEqualTo("/storage/presigned");
+
+            verifyNoInteractions(presignQueryPort);
+        }
+
+        @Test
+        void presigned_shouldReturnUnsupportedMediaType_whenContentTypeIsNotJson() throws Exception {
+            FileRequest file = new FileRequest("id", 50_000L, "image/jpeg");
+            PresignedRequest request = new PresignedRequest(ContextType.PRODUCT, List.of(file));
+
+            String content = mockMvc.perform(post("/storage/presigned")
+                            .with(authentication(SecurityContextTestService.initializeAuth(user)))
+                            .content(objectMapper.writeValueAsString(request))
+                            .contentType(MediaType.TEXT_PLAIN))
+                    .andExpect(status().isUnsupportedMediaType())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+
+            ExceptionResponse exceptionResponse = objectMapper.readValue(content, ExceptionResponse.class);
+            assertThat(exceptionResponse).isNotNull();
+            assertThat(exceptionResponse.getCode()).isEqualTo(415);
+            assertThat(exceptionResponse.getMessage()).isEqualTo("Unsupported media type.");
             assertThat(exceptionResponse.getPath()).isEqualTo("/storage/presigned");
 
             verifyNoInteractions(presignQueryPort);

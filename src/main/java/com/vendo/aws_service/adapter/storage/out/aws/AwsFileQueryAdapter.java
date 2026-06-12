@@ -16,6 +16,8 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 import java.time.Duration;
 import java.util.UUID;
 
+import static com.vendo.core_lib.constants.Separators.SLASH_SEPARATOR;
+
 @Component
 @RequiredArgsConstructor
 public class AwsFileQueryAdapter implements PresignQueryPort {
@@ -25,11 +27,9 @@ public class AwsFileQueryAdapter implements PresignQueryPort {
 
     private final FileExtensionParser extensionParser;
 
-    private static final String SLASH_DELIMITER = "/";
-
     @Override
     public PresignedBody presign(ContextType type, File file) {
-        String key = type.getPath() + SLASH_DELIMITER + generateFilename(file.contentType());
+        String key = type.getPath() + SLASH_SEPARATOR + generateFilename(file.contentType());
         String presignedUrl = generatePresignUrl(file.contentType(), key);
 
         return new PresignedBody(
