@@ -1,6 +1,7 @@
 package com.vendo.aws_service.adapter.spring.in.exception;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.vendo.core_lib.constants.Delimiters;
 import com.vendo.security_lib.exception.response.ExceptionResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -54,27 +55,37 @@ public class SpringExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     protected ResponseEntity<ExceptionResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e, HttpServletRequest request) {
-        if (e.getCause() instanceof InvalidFormatException cause && cause.getTargetType() != null && cause.getTargetType().isEnum()) {
-            String fieldName = cause.getPath().isEmpty() ? "field"
-                    : cause.getPath().get(cause.getPath().size() - 1).getFieldName();
-
-            String allowedValues = Arrays.stream(cause.getTargetType().getEnumConstants())
-                    .map(Object::toString)
-                    .collect(Collectors.joining(", "));
-
-            ExceptionResponse exceptionResponse = ExceptionResponse.builder()
-                    .message("Validation failed.")
-                    .errors(Map.of(fieldName, "Allowed types are: " + allowedValues))
-                    .code(HttpStatus.BAD_REQUEST.value())
-                    .path(request.getRequestURI())
-                    .build();
-
-            return ResponseEntity.badRequest().body(exceptionResponse);
+        if (e.getCause() instanceof InvalidFormatException cause) {
+            return handleInvalidFormatException(cause, request);
         }
 
         log.error(e.getMessage());
         ExceptionResponse exceptionResponse = ExceptionResponse.builder()
                 .message("Invalid body structure.")
+                .code(HttpStatus.BAD_REQUEST.value())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.badRequest().body(exceptionResponse);
+    }
+
+    private ResponseEntity<ExceptionResponse> handleInvalidFormatException(InvalidFormatException cause, HttpServletRequest request) {
+        String fieldName = cause.getPath().isEmpty() ? "field"
+                : cause.getPath().get(cause.getPath().size() - 1).getFieldName();
+
+        String errorMessage;
+        if (cause.getTargetType() != null && cause.getTargetType().isEnum()) {
+            String allowedValues = Arrays.stream(cause.getTargetType().getEnumConstants())
+                    .map(Object::toString)
+                    .collect(Collectors.joining(Delimiters.COMMA_DELIMITER));
+            errorMessage = "Allowed types are: " + allowedValues;
+        } else {
+            errorMessage = "Invalid value.";
+        }
+
+        ExceptionResponse exceptionResponse = ExceptionResponse.builder()
+                .message("Validation failed.")
+                .errors(Map.of(fieldName, errorMessage))
                 .code(HttpStatus.BAD_REQUEST.value())
                 .path(request.getRequestURI())
                 .build();
