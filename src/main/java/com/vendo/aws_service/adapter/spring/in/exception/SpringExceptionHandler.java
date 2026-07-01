@@ -73,14 +73,12 @@ public class SpringExceptionHandler {
         String fieldName = cause.getPath().isEmpty() ? "field"
                 : cause.getPath().get(cause.getPath().size() - 1).getFieldName();
 
-        String errorMessage;
+        String errorMessage = "Invalid value.";
         if (cause.getTargetType() != null && cause.getTargetType().isEnum()) {
             String allowedValues = Arrays.stream(cause.getTargetType().getEnumConstants())
                     .map(Object::toString)
                     .collect(Collectors.joining(Delimiters.COMMA_DELIMITER));
             errorMessage = "Allowed types are: " + allowedValues;
-        } else {
-            errorMessage = "Invalid value.";
         }
 
         ExceptionResponse exceptionResponse = ExceptionResponse.builder()
