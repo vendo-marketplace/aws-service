@@ -110,6 +110,35 @@ public class StorageControllerIntegrationTest {
         }
 
         @Test
+        void presigned_shouldReturnBadRequest_whenInvalidEnumType() throws Exception {
+            String invalidBody = """
+                    {"type": "invalid_type", "files": [{"id": "1", "size": 1000, "contentType": "image/png"}]}
+                    """;
+
+            String content = mockMvc.perform(post("/storage/presigned")
+                            .with(authentication(SecurityContextTestService.initializeAuth(user)))
+                            .content(invalidBody)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isBadRequest())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+
+            assertThat(content).isNotBlank();
+
+            ExceptionResponse exceptionResponse = objectMapper.readValue(content, ExceptionResponse.class);
+            assertThat(exceptionResponse).isNotNull();
+            assertThat(exceptionResponse.getTimestamp()).isNotNull();
+            assertThat(exceptionResponse.getCode()).isEqualTo(400);
+            assertThat(exceptionResponse.getMessage()).isEqualTo("Validation failed.");
+            assertThat(exceptionResponse.getErrors()).isNotNull();
+            assertThat(exceptionResponse.getErrors().get("type")).isEqualTo("Allowed types are: PRODUCT");
+            assertThat(exceptionResponse.getPath()).isEqualTo("/storage/presigned");
+
+            verifyNoInteractions(presignQueryPort);
+        }
+
+        @Test
         void presigned_shouldReturnBadRequest_whenFilesAndTypeAreMissing() throws Exception {
             PresignedRequest request = new PresignedRequest(null, null);
 
@@ -192,8 +221,9 @@ public class StorageControllerIntegrationTest {
             assertThat(exceptionResponse).isNotNull();
             assertThat(exceptionResponse.getTimestamp()).isNotNull();
             assertThat(exceptionResponse.getCode()).isEqualTo(400);
-            assertThat(exceptionResponse.getMessage()).isEqualTo("Invalid file type of image: %s.".formatted(file.contentType()));
-            assertThat(exceptionResponse.getErrors()).isNull();
+            assertThat(exceptionResponse.getMessage()).isEqualTo("Validation failed.");
+            assertThat(exceptionResponse.getErrors()).isNotNull();
+            assertThat(exceptionResponse.getErrors().get("contentType")).isEqualTo("Invalid file type of image: %s.".formatted(file.contentType()));
             assertThat(exceptionResponse.getPath()).isEqualTo("/storage/presigned");
 
             verifyNoInteractions(presignQueryPort);
@@ -219,8 +249,9 @@ public class StorageControllerIntegrationTest {
             assertThat(exceptionResponse).isNotNull();
             assertThat(exceptionResponse.getTimestamp()).isNotNull();
             assertThat(exceptionResponse.getCode()).isEqualTo(400);
-            assertThat(exceptionResponse.getMessage()).isEqualTo("Invalid file type of image: %s.".formatted(file.contentType()));
-            assertThat(exceptionResponse.getErrors()).isNull();
+            assertThat(exceptionResponse.getMessage()).isEqualTo("Validation failed.");
+            assertThat(exceptionResponse.getErrors()).isNotNull();
+            assertThat(exceptionResponse.getErrors().get("contentType")).isEqualTo("Invalid file type of image: %s.".formatted(file.contentType()));
             assertThat(exceptionResponse.getPath()).isEqualTo("/storage/presigned");
 
             verifyNoInteractions(presignQueryPort);
