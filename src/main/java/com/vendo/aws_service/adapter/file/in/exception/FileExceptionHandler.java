@@ -1,8 +1,10 @@
 package com.vendo.aws_service.adapter.file.in.exception;
 
+import com.vendo.aws_service.domain.file.File;
 import com.vendo.aws_service.domain.file.exception.DuplicateFileIdException;
 import com.vendo.aws_service.domain.file.exception.FileSizeExceededException;
 import com.vendo.aws_service.domain.file.exception.InvalidFileTypeException;
+import com.vendo.core_lib.utils.ClassFields;
 import com.vendo.security_lib.exception.response.ExceptionResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -10,10 +12,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Map;
+
 @RestControllerAdvice
 public class FileExceptionHandler {
 
-    @ExceptionHandler({InvalidFileTypeException.class, FileSizeExceededException.class, DuplicateFileIdException.class})
+    @ExceptionHandler(InvalidFileTypeException.class)
+    public ResponseEntity<ExceptionResponse> handleInvalidFileTypeException(InvalidFileTypeException e, HttpServletRequest request) {
+        ExceptionResponse exceptionResponse = ExceptionResponse.builder()
+                .message("Validation failed.")
+                .errors(Map.of(ClassFields.nameOf("contentType", File.class), e.getMessage()))
+                .code(HttpStatus.BAD_REQUEST.value())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponse);
+    }
+
+    @ExceptionHandler({FileSizeExceededException.class, DuplicateFileIdException.class})
     public ResponseEntity<ExceptionResponse> handleFileException(Exception e, HttpServletRequest request) {
         ExceptionResponse exceptionResponse = ExceptionResponse.builder()
                 .message(e.getMessage())
@@ -23,6 +39,5 @@ public class FileExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponse);
     }
-
 
 }
