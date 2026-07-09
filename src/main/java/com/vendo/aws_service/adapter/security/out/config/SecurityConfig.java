@@ -1,7 +1,7 @@
 package com.vendo.aws_service.adapter.security.out.config;
 
-import com.vendo.aws_service.adapter.security.in.filter.JwtAuthFilter;
-import com.vendo.aws_service.adapter.security.in.filter.exception.JwtAuthenticationEntryPoint;
+import com.vendo.aws_service.adapter.security.in.filter.AuthFilter;
+import com.vendo.aws_service.shared.props.PathProps;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,10 +10,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
-
-import static com.vendo.aws_service.adapter.security.in.filter.AwsAntPathResolver.PERMITTED_PATHS;
 
 @Configuration
 @EnableWebSecurity
@@ -21,9 +21,12 @@ import static com.vendo.aws_service.adapter.security.in.filter.AwsAntPathResolve
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthFilter jwtAuthFilter;
+    private final AuthFilter authFilter;
 
-    private final JwtAuthenticationEntryPoint authenticationEntryPoint;
+    private final AccessDeniedHandler accessDeniedHandler;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
+
+    private final PathProps pathProps;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -32,13 +35,14 @@ public class SecurityConfig {
                 .anonymous(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .exceptionHandling(configurer -> configurer
+                        .accessDeniedHandler(accessDeniedHandler)
                         .authenticationEntryPoint(authenticationEntryPoint))
                 .sessionManagement(sessionManager -> sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(PERMITTED_PATHS).permitAll()
+                        .requestMatchers(pathProps.getAllPaths()).permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterAfter(jwtAuthFilter, ExceptionTranslationFilter.class);
+                .addFilterAfter(authFilter, ExceptionTranslationFilter.class);
 
         return http.build();
     }
