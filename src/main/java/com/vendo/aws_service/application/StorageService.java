@@ -31,7 +31,7 @@ public class StorageService implements StorageUseCase {
     public List<PresignedBody> presign(ContextType type, List<File> files) {
         validateAllFiles(files);
         Map<String, PresignedBody> bodiesById = presignAll(type, files);
-        sendEvents(mapToPresignedFiles(files, bodiesById));
+        sendEvents(toPresignedFiles(files, bodiesById));
         return List.copyOf(bodiesById.values());
     }
 
@@ -39,7 +39,7 @@ public class StorageService implements StorageUseCase {
         Set<String> ids = new HashSet<>();
 
         for (File file : files) {
-            throwIfInvalidContentType(file.contentType());
+            throwIfInvalidImageType(file.contentType());
 
             if (!ids.add(file.id())) {
                 throw new DuplicateFileIdException("File ids must be unique.");
@@ -47,7 +47,7 @@ public class StorageService implements StorageUseCase {
         }
     }
 
-    private void throwIfInvalidContentType(String contentType) {
+    private void throwIfInvalidImageType(String contentType) {
         if (!fileValidationPort.isImage(contentType)) {
             throw new InvalidFileTypeException("Invalid file type of image: %s.".formatted(contentType));
         }
@@ -59,7 +59,7 @@ public class StorageService implements StorageUseCase {
                 .collect(Collectors.toMap(PresignedBody::id, pb -> pb));
     }
 
-    private List<PresignedFile> mapToPresignedFiles(List<File> files, Map<String, PresignedBody> bodies) {
+    private List<PresignedFile> toPresignedFiles(List<File> files, Map<String, PresignedBody> bodies) {
         return files.stream()
                 .map(file -> PresignedFile.of(findBodyById(file.id(), bodies).key(), file.size(), file.contentType()))
                 .toList();
