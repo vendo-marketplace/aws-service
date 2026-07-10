@@ -3,6 +3,6 @@ spring:
     name: aws-service
   profiles:
     active: ${APP_PROFILE}
-    include: aws
+    include: aws,kafka
   config:
     import: "optional:configserver:${CONFIG_SERVER_URL}"
