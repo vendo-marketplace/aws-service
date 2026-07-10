@@ -1,4 +1,4 @@
-package com.vendo.aws_service.infrastructure.props;
+package com.vendo.aws_service.shared.props;
 
 import lombok.Getter;
 import lombok.Setter;
