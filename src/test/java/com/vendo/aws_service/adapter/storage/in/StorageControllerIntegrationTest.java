@@ -1,6 +1,7 @@
 package com.vendo.aws_service.adapter.storage.in;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vendo.aws_service.domain.file.PresignedFile;
 import com.vendo.aws_service.domain.user.User;
 import com.vendo.aws_service.adapter.storage.in.dto.FileRequest;
 import com.vendo.aws_service.adapter.storage.in.dto.PresignedRequest;
@@ -8,6 +9,7 @@ import com.vendo.aws_service.adapter.storage.in.dto.PresignedResponse;
 import com.vendo.aws_service.domain.file.File;
 import com.vendo.aws_service.domain.storage.dto.PresignedBody;
 import com.vendo.aws_service.domain.storage.type.ContextType;
+import com.vendo.aws_service.port.product.ProductImageEventSenderPort;
 import com.vendo.aws_service.port.storage.PresignQueryPort;
 import com.vendo.aws_service.test_utils.builder.UserDataBuilder;
 import com.vendo.aws_service.test_utils.security.SecurityContextTestService;
@@ -46,8 +48,11 @@ public class StorageControllerIntegrationTest {
 
     @MockitoBean
     private PresignQueryPort presignQueryPort;
+    @MockitoBean
+    private ProductImageEventSenderPort productImageEventSenderPort;
 
     private final User user = UserDataBuilder.withAllFields().build();
+
     @Nested
     class PresignedTests {
 
@@ -57,6 +62,7 @@ public class StorageControllerIntegrationTest {
             PresignedRequest request = new PresignedRequest(ContextType.PRODUCT, List.of(file));
             PresignedBody presignedBody = new PresignedBody(file.id(), "url", "products/uuid");
             ArgumentCaptor<File> fileCaptor = ArgumentCaptor.forClass(File.class);
+            ArgumentCaptor<PresignedFile> presignedFileCaptor = ArgumentCaptor.forClass(PresignedFile.class);
 
             when(presignQueryPort.presign(eq(request.type()), fileCaptor.capture())).thenReturn(presignedBody);
 
@@ -81,6 +87,13 @@ public class StorageControllerIntegrationTest {
             assertThat(presignedResponse.files().get(0)).isEqualTo(presignedBody);
 
             verify(presignQueryPort).presign(request.type(), captorValue);
+            verify(productImageEventSenderPort).send(presignedFileCaptor.capture());
+
+            PresignedFile presignedFile = presignedFileCaptor.getValue();
+            assertThat(presignedFile).isNotNull();
+            assertThat(presignedFile.key()).isEqualTo(presignedBody.key());
+            assertThat(presignedFile.contentType()).isEqualTo(file.contentType());
+            assertThat(presignedFile.size()).isEqualTo(file.size());
         }
 
         @Test
@@ -106,7 +119,7 @@ public class StorageControllerIntegrationTest {
             assertThat(exceptionResponse.getMessage()).isEqualTo("Unauthorized.");
             assertThat(exceptionResponse.getPath()).isEqualTo("/storage/presigned");
 
-            verifyNoInteractions(presignQueryPort);
+            verifyNoInteractions(presignQueryPort, productImageEventSenderPort);
         }
 
         @Test
@@ -135,7 +148,7 @@ public class StorageControllerIntegrationTest {
             assertThat(exceptionResponse.getErrors().get("type")).isEqualTo("Allowed types are: PRODUCT");
             assertThat(exceptionResponse.getPath()).isEqualTo("/storage/presigned");
 
-            verifyNoInteractions(presignQueryPort);
+            verifyNoInteractions(presignQueryPort, productImageEventSenderPort);
         }
 
         @Test
@@ -164,7 +177,7 @@ public class StorageControllerIntegrationTest {
             assertThat(exceptionResponse.getErrors().get("files")).isEqualTo("At least 1 file is required.");
             assertThat(exceptionResponse.getPath()).isEqualTo("/storage/presigned");
 
-            verifyNoInteractions(presignQueryPort);
+            verifyNoInteractions(presignQueryPort, productImageEventSenderPort);
         }
 
         @Test
@@ -198,7 +211,7 @@ public class StorageControllerIntegrationTest {
             assertThat(exceptionResponse.getErrors().get("files[1].contentType")).isEqualTo("Content type is required.");
             assertThat(exceptionResponse.getPath()).isEqualTo("/storage/presigned");
 
-            verifyNoInteractions(presignQueryPort);
+            verifyNoInteractions(presignQueryPort, productImageEventSenderPort);
         }
 
         @Test
@@ -226,7 +239,7 @@ public class StorageControllerIntegrationTest {
             assertThat(exceptionResponse.getErrors().get("contentType")).isEqualTo("Invalid file type of image: %s.".formatted(file.contentType()));
             assertThat(exceptionResponse.getPath()).isEqualTo("/storage/presigned");
 
-            verifyNoInteractions(presignQueryPort);
+            verifyNoInteractions(presignQueryPort, productImageEventSenderPort);
         }
 
         @Test
@@ -254,7 +267,7 @@ public class StorageControllerIntegrationTest {
             assertThat(exceptionResponse.getErrors().get("contentType")).isEqualTo("Invalid file type of image: %s.".formatted(file.contentType()));
             assertThat(exceptionResponse.getPath()).isEqualTo("/storage/presigned");
 
-            verifyNoInteractions(presignQueryPort);
+            verifyNoInteractions(presignQueryPort, productImageEventSenderPort);
         }
 
         @Test
@@ -281,7 +294,7 @@ public class StorageControllerIntegrationTest {
             assertThat(exceptionResponse.getMessage()).isEqualTo("File ids must be unique.");
             assertThat(exceptionResponse.getPath()).isEqualTo("/storage/presigned");
 
-            verifyNoInteractions(presignQueryPort);
+            verifyNoInteractions(presignQueryPort, productImageEventSenderPort);
         }
 
         @Test
@@ -304,7 +317,7 @@ public class StorageControllerIntegrationTest {
             assertThat(exceptionResponse.getMessage()).isEqualTo("Unsupported media type.");
             assertThat(exceptionResponse.getPath()).isEqualTo("/storage/presigned");
 
-            verifyNoInteractions(presignQueryPort);
+            verifyNoInteractions(presignQueryPort, productImageEventSenderPort);
         }
     }
 }

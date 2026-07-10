@@ -1,6 +1,10 @@
 server:
   url: server_test_url
 
+spring:
+  kafka:
+    bootstrap-servers: test
+
 security:
   jwt:
     internal:
@@ -22,6 +26,12 @@ aws:
     expiration: 600
   file:
     max-size: 8000000
+
+kafka:
+  events:
+    product:
+      image-requested-event:
+        topic: "PRODUCT_IMAGE_REQUESTED_TOPIC"
 
 endpoints:
   unauthenticated:
