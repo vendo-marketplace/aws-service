@@ -7,7 +7,7 @@ import com.vendo.aws_service.domain.storage.type.ContextType;
 import com.vendo.aws_service.domain.file.File;
 import com.vendo.aws_service.domain.storage.dto.PresignedBody;
 import com.vendo.aws_service.port.file.FileValidationPort;
-import com.vendo.aws_service.port.product.ProductEventSenderPort;
+import com.vendo.aws_service.port.product.ProductImageEventSenderPort;
 import com.vendo.aws_service.port.storage.PresignQueryPort;
 import com.vendo.aws_service.port.storage.StorageUseCase;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class StorageService implements StorageUseCase {
 
     private final PresignQueryPort presignQueryPort;
     private final FileValidationPort fileValidationPort;
-    private final ProductEventSenderPort productEventSenderPort;
+    private final ProductImageEventSenderPort productImageEventSenderPort;
 
     @Override
     public List<PresignedBody> presign(ContextType type, List<File> files) {
@@ -72,6 +72,6 @@ public class StorageService implements StorageUseCase {
     }
 
     private void sendEvents(List<PresignedFile> files) {
-        files.forEach(productEventSenderPort::sendImageRequested);
+        files.forEach(productImageEventSenderPort::send);
     }
 }

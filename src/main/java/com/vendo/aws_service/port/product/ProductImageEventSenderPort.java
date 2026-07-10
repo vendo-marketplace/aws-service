@@ -2,8 +2,8 @@ package com.vendo.aws_service.port.product;
 
 import com.vendo.aws_service.domain.file.PresignedFile;
 
-public interface ProductEventSenderPort {
+public interface ProductImageEventSenderPort {
 
-    void sendImageRequested(PresignedFile presignedFile);
+    void send(PresignedFile presignedFile);
 
 }
