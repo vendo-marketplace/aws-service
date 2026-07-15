@@ -47,15 +47,6 @@
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
 
-        <!--apache-->
-
-        <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-core</artifactId>
-            <version>3.3.0</version>
-            <scope>compile</scope>
-        </dependency>
-
         <!--aws-->
 
         <dependency>
