@@ -5,7 +5,7 @@ import com.vendo.aws_service.domain.user.User;
 import com.vendo.aws_service.test_utils.builder.UserDataBuilder;
 import com.vendo.aws_service.test_utils.dto.PingRequest;
 import com.vendo.aws_service.test_utils.security.SecurityContextTestService;
-import com.vendo.security_lib.exception.response.ExceptionResponse;
+import com.vendo.security_lib.exception.ExceptionResponse;
 import com.vendo.security_lib.type.AuthHeader;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

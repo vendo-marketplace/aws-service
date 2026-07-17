@@ -1,5 +1,6 @@
 package com.vendo.aws_service.adapter.security.in.filter;
 
+import com.vendo.aws_service.adapter.security.in.filter.path.AwsAntPathResolver;
 import com.vendo.aws_service.domain.user.User;
 import com.vendo.security_lib.type.AuthHeader;
 import com.vendo.security_starter.filter.header.HeaderExtractor;

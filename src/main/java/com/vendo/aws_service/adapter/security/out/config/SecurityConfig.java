@@ -1,6 +1,7 @@
 package com.vendo.aws_service.adapter.security.out.config;
 
 import com.vendo.aws_service.adapter.security.in.filter.AuthFilter;
+import com.vendo.aws_service.adapter.security.in.filter.InternalFilter;
 import com.vendo.aws_service.shared.props.PathProps;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
 
 @Configuration
@@ -21,6 +23,9 @@ import org.springframework.security.web.access.ExceptionTranslationFilter;
 public class SecurityConfig {
 
     private final AuthFilter authFilter;
+    private final InternalFilter internalFilter;
+
+    private final AccessDeniedHandler accessDeniedHandler;
     private final AuthenticationEntryPoint authenticationEntryPoint;
 
     private final PathProps props;
@@ -32,13 +37,15 @@ public class SecurityConfig {
                 .anonymous(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .exceptionHandling(configurer -> configurer
+                        .accessDeniedHandler(accessDeniedHandler)
                         .authenticationEntryPoint(authenticationEntryPoint))
                 .sessionManagement(sessionManager -> sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(props.allPaths()).permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterAfter(authFilter, ExceptionTranslationFilter.class);
+                .addFilterAfter(authFilter, ExceptionTranslationFilter.class)
+                .addFilterAfter(internalFilter, AuthFilter.class);
 
         return http.build();
     }

@@ -5,7 +5,7 @@ import com.vendo.aws_service.domain.file.exception.DuplicateFileIdException;
 import com.vendo.aws_service.domain.file.exception.FileSizeExceededException;
 import com.vendo.aws_service.domain.file.exception.InvalidFileTypeException;
 import com.vendo.core_lib.utils.ClassFields;
-import com.vendo.security_lib.exception.response.ExceptionResponse;
+import com.vendo.security_lib.exception.ExceptionResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
