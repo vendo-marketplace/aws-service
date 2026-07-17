@@ -17,9 +17,10 @@ import java.util.stream.Stream;
 public class PathProps {
 
     private Set<String> general;
+    private Set<String> internal;
 
     public String[] allPaths() {
-        return Stream.of(general)
+        return Stream.of(general, internal)
                 .flatMap(Collection::stream)
                 .filter(Objects::nonNull)
                 .toArray(String[]::new);
