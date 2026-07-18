@@ -78,9 +78,9 @@ public class InternalPresignControllerIntegrationTest {
             AssertionUtils.assertFrom(file, captorValue);
 
             PresignResponse presignResponse = objectMapper.readValue(content, PresignResponse.class);
-            assertThat(presignResponse.files()).isNotNull();
-            assertThat(presignResponse.files().size()).isEqualTo(1);
-            assertThat(presignResponse.files().get(0)).isEqualTo(presignBody);
+            assertThat(presignResponse.data()).isNotNull();
+            assertThat(presignResponse.data().size()).isEqualTo(1);
+            assertThat(presignResponse.data().get(0)).isEqualTo(presignBody);
 
             verify(presignQueryPort).presign(request.type(), captorValue);
         }
