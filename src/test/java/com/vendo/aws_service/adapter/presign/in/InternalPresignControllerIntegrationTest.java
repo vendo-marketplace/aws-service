@@ -61,7 +61,7 @@ public class InternalPresignControllerIntegrationTest {
             when(presignQueryPort.presign(eq(request.type()), fileCaptor.capture())).thenReturn(presignBody);
 
             String content = mockMvc.perform(post("/internal/presign")
-                            .with(authentication(SecurityContextTestService.initializeAuth(user)))
+                            .with(authentication(SecurityContextTestService.initializeEmptyAuth()))
                             .content(objectMapper.writeValueAsString(request))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
@@ -116,7 +116,7 @@ public class InternalPresignControllerIntegrationTest {
                     """;
 
             String content = mockMvc.perform(post("/internal/presign")
-                            .with(authentication(SecurityContextTestService.initializeAuth(user)))
+                            .with(authentication(SecurityContextTestService.initializeEmptyAuth()))
                             .content(invalidBody)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
@@ -143,7 +143,7 @@ public class InternalPresignControllerIntegrationTest {
             PresignRequest request = new PresignRequest(null, null);
 
             String content = mockMvc.perform(post("/internal/presign")
-                            .with(authentication(SecurityContextTestService.initializeAuth(user)))
+                            .with(authentication(SecurityContextTestService.initializeEmptyAuth()))
                             .content(objectMapper.writeValueAsString(request))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
@@ -174,7 +174,7 @@ public class InternalPresignControllerIntegrationTest {
             PresignRequest request = new PresignRequest(ContextType.PRODUCT, List.of(file1, file2));
 
             String content = mockMvc.perform(post("/internal/presign")
-                            .with(authentication(SecurityContextTestService.initializeAuth(user)))
+                            .with(authentication(SecurityContextTestService.initializeEmptyAuth()))
                             .content(objectMapper.writeValueAsString(request))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
@@ -204,7 +204,7 @@ public class InternalPresignControllerIntegrationTest {
             PresignRequest request = new PresignRequest(ContextType.PRODUCT, List.of(file));
 
             String content = mockMvc.perform(post("/internal/presign")
-                            .with(authentication(SecurityContextTestService.initializeAuth(user)))
+                            .with(authentication(SecurityContextTestService.initializeEmptyAuth()))
                             .content(objectMapper.writeValueAsString(request))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
@@ -232,7 +232,7 @@ public class InternalPresignControllerIntegrationTest {
             PresignRequest request = new PresignRequest(ContextType.PRODUCT, List.of(file));
 
             String content = mockMvc.perform(post("/internal/presign")
-                            .with(authentication(SecurityContextTestService.initializeAuth(user)))
+                            .with(authentication(SecurityContextTestService.initializeEmptyAuth()))
                             .content(objectMapper.writeValueAsString(request))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
@@ -261,7 +261,7 @@ public class InternalPresignControllerIntegrationTest {
             PresignRequest request = new PresignRequest(ContextType.PRODUCT, List.of(file1, file2));
 
             String content = mockMvc.perform(post("/internal/presign")
-                            .with(authentication(SecurityContextTestService.initializeAuth(user)))
+                            .with(authentication(SecurityContextTestService.initializeEmptyAuth()))
                             .content(objectMapper.writeValueAsString(request))
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
@@ -287,7 +287,7 @@ public class InternalPresignControllerIntegrationTest {
             PresignRequest request = new PresignRequest(ContextType.PRODUCT, List.of(file));
 
             String content = mockMvc.perform(post("/internal/presign")
-                            .with(authentication(SecurityContextTestService.initializeAuth(user)))
+                            .with(authentication(SecurityContextTestService.initializeEmptyAuth()))
                             .content(objectMapper.writeValueAsString(request))
                             .contentType(MediaType.TEXT_PLAIN))
                     .andExpect(status().isUnsupportedMediaType())

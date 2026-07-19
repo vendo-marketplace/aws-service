@@ -2,39 +2,16 @@ package com.vendo.aws_service.test_utils.security;
 
 import com.vendo.aws_service.domain.user.User;
 import com.vendo.security_lib.type.AuthHeader;
-import com.vendo.security_starter.jwt.parser.TokenClaims;
-import com.vendo.user_lib.type.UserRole;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import java.util.Set;
 
 import static com.vendo.core_lib.constants.Delimiters.COMMA_DELIMITER;
 
 public class SecurityContextTestService {
 
-    public static Authentication initializeAuth(TokenClaims claims) {
-        Set<String> roles = claims.roles();
-        if (roles == null || roles.isEmpty()) roles = Set.of(UserRole.USER.name());
-
-        return new UsernamePasswordAuthenticationToken(
-                claims,
-                null,
-                roles.stream().map(SimpleGrantedAuthority::new).toList()
-        );
-    }
-
-    public static Authentication initializeAuth(User user) {
-        Set<UserRole> roles = user.roles();
-        if (roles == null || roles.isEmpty()) roles = Set.of(UserRole.USER);
-
-        return new UsernamePasswordAuthenticationToken(
-                user,
-                null,
-                roles.stream().map(role -> new SimpleGrantedAuthority(role.name())).toList()
-        );
+    public static Authentication initializeEmptyAuth() {
+        return new UsernamePasswordAuthenticationToken(null,  null);
     }
 
     public static HttpHeaders extractHeaders(User user) {
