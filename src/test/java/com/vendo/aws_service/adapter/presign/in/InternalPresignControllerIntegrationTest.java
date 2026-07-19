@@ -1,7 +1,6 @@
 package com.vendo.aws_service.adapter.presign.in;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vendo.aws_service.domain.file.PresignFile;
 import com.vendo.aws_service.domain.user.User;
 import com.vendo.aws_service.adapter.presign.in.dto.FileRequest;
 import com.vendo.aws_service.adapter.presign.in.dto.PresignRequest;
@@ -41,7 +40,6 @@ public class InternalPresignControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
 

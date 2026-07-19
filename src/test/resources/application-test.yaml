@@ -1,6 +1,3 @@
-server:
-  url: server_test_url
-
 spring:
   kafka:
     bootstrap-servers: test
@@ -9,8 +6,6 @@ security:
   jwt:
     internal:
       key: internalKeyinternalKeyinternalKeyinternalKey
-    secret:
-      key: secretKeysecretKeysecretKeysecretKeysecretKey
 
 eureka:
   client:
@@ -24,17 +19,12 @@ aws:
     bucket-name: bucketName
   presign:
     expiration: 600
-  file:
-    max-size: 8000000
 
-kafka:
-  events:
-    product:
-      image-requested-event:
-        topic: "PRODUCT_IMAGE_REQUESTED_TOPIC"
 
 endpoints:
   unauthenticated:
     general:
       - /actuator/health
+    internal:
+      - /internal/presign
 
