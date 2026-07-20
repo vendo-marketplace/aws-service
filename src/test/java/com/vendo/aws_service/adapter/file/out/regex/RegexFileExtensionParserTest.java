@@ -16,7 +16,6 @@ class RegexFileExtensionParserTest {
     @CsvSource({
             "image/jpeg, .jpg",
             "image/png, .png",
-            "image/gif, .gif",
             "image/webp, .webp",
             "image/bmp, .bmp",
             "image/tiff, .tiff",
@@ -38,7 +37,9 @@ class RegexFileExtensionParserTest {
             "application/json",
             "image/",
             "image",
-            "not-a-content-type"
+            "not-a-content-type",
+            "image/123",
+            "image/gif"
     })
     void parse_shouldThrow_forUnsupportedOrMalformedContentType(String contentType) {
         assertThatThrownBy(() -> parser.parse(contentType))

@@ -13,12 +13,11 @@ import java.util.regex.Pattern;
 @Component
 public class RegexFileExtensionParser implements FileExtensionParser {
 
-    private static final Pattern CONTENT_TYPE_PATTERN = Pattern.compile("^image/([a-z0-9.+-]+)$");
+    private static final Pattern CONTENT_TYPE_PATTERN = Pattern.compile("^image/([a-z.+-]+)$");
 
     private static final Map<String, String> EXTENSIONS_BY_SUBTYPE = Map.ofEntries(
             Map.entry("jpeg", ".jpg"),
             Map.entry("png", ".png"),
-            Map.entry("gif", ".gif"),
             Map.entry("webp", ".webp"),
             Map.entry("bmp", ".bmp"),
             Map.entry("tiff", ".tiff"),
