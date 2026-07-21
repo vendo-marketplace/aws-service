@@ -264,7 +264,7 @@ public class InternalPresignControllerIntegrationTest {
                             .with(authentication(SecurityContextTestService.initializeEmptyAuth()))
                             .content(objectMapper.writeValueAsString(request))
                             .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isConflict())
                     .andReturn()
                     .getResponse()
                     .getContentAsString();
@@ -274,7 +274,7 @@ public class InternalPresignControllerIntegrationTest {
             ExceptionResponse exceptionResponse = objectMapper.readValue(content, ExceptionResponse.class);
             assertThat(exceptionResponse).isNotNull();
             assertThat(exceptionResponse.getTimestamp()).isNotNull();
-            assertThat(exceptionResponse.getCode()).isEqualTo(400);
+            assertThat(exceptionResponse.getCode()).isEqualTo(409);
             assertThat(exceptionResponse.getMessage()).isEqualTo("File ids must be unique.");
             assertThat(exceptionResponse.getPath()).isEqualTo("/internal/presign");
 
