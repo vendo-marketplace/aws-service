@@ -32,11 +32,11 @@ public class FileExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleDuplicateFileIdException(DuplicateFileIdException e, HttpServletRequest request) {
         ExceptionResponse exceptionResponse = ExceptionResponse.builder()
                 .message(e.getMessage())
-                .code(HttpStatus.BAD_REQUEST.value())
+                .code(HttpStatus.CONFLICT.value())
                 .path(request.getRequestURI())
                 .build();
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponse);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(exceptionResponse);
     }
 
 }
