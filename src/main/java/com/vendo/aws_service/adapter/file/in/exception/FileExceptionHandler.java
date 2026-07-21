@@ -2,7 +2,6 @@ package com.vendo.aws_service.adapter.file.in.exception;
 
 import com.vendo.aws_service.domain.file.File;
 import com.vendo.aws_service.domain.file.exception.DuplicateFileIdException;
-import com.vendo.aws_service.domain.file.exception.FileSizeExceededException;
 import com.vendo.aws_service.domain.file.exception.InvalidFileTypeException;
 import com.vendo.core_lib.utils.ClassFields;
 import com.vendo.security_lib.exception.ExceptionResponse;
@@ -29,8 +28,8 @@ public class FileExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponse);
     }
 
-    @ExceptionHandler({FileSizeExceededException.class, DuplicateFileIdException.class})
-    public ResponseEntity<ExceptionResponse> handleFileException(Exception e, HttpServletRequest request) {
+    @ExceptionHandler(DuplicateFileIdException.class)
+    public ResponseEntity<ExceptionResponse> handleDuplicateFileIdException(DuplicateFileIdException e, HttpServletRequest request) {
         ExceptionResponse exceptionResponse = ExceptionResponse.builder()
                 .message(e.getMessage())
                 .code(HttpStatus.BAD_REQUEST.value())
