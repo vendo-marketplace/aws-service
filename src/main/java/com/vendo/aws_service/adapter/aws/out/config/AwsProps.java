@@ -1,4 +1,4 @@
-package com.vendo.aws_service.adapter.presign.out.aws.config;
+package com.vendo.aws_service.adapter.aws.out.config;
 
 import lombok.Getter;
 import lombok.Setter;

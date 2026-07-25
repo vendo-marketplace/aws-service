@@ -1,12 +1,14 @@
-package com.vendo.aws_service.adapter.presign.out.aws;
+package com.vendo.aws_service.adapter.aws.out;
 
-import com.vendo.aws_service.adapter.presign.out.aws.config.AwsProps;
+import com.vendo.aws_service.adapter.aws.out.config.AwsProps;
+import com.vendo.aws_service.adapter.aws.out.exception.AwsException;
 import com.vendo.aws_service.adapter.file.out.FileExtensionParser;
 import com.vendo.aws_service.domain.presign.type.ContextType;
 import com.vendo.aws_service.domain.file.File;
 import com.vendo.aws_service.domain.presign.dto.PresignBody;
 import com.vendo.aws_service.port.presign.PresignQueryPort;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
@@ -18,6 +20,7 @@ import java.util.UUID;
 
 import static com.vendo.core_lib.constants.Separators.SLASH_SEPARATOR;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AwsFileQueryAdapter implements PresignQueryPort {
@@ -51,8 +54,13 @@ public class AwsFileQueryAdapter implements PresignQueryPort {
                 .putObjectRequest(objectRequest)
                 .build();
 
-        PresignedPutObjectRequest presignedRequest = s3Client.presignPutObject(presignRequest);
-        return presignedRequest.url().toString();
+        try {
+            PresignedPutObjectRequest presignedRequest = s3Client.presignPutObject(presignRequest);
+            return presignedRequest.url().toString();
+        } catch (Exception e) {
+            log.error("Something went wrong while presigning file: {}.", e.getMessage());
+            throw new AwsException("Unable to presign file.");
+        }
     }
 
     private String generateFilename(String contentType) {

@@ -1,7 +1,6 @@
 package com.vendo.aws_service.adapter.presign.in;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vendo.aws_service.domain.user.User;
 import com.vendo.aws_service.adapter.presign.in.dto.FileRequest;
 import com.vendo.aws_service.adapter.presign.in.dto.PresignRequest;
 import com.vendo.aws_service.adapter.presign.in.dto.PresignResponse;
@@ -9,7 +8,6 @@ import com.vendo.aws_service.domain.file.File;
 import com.vendo.aws_service.domain.presign.dto.PresignBody;
 import com.vendo.aws_service.domain.presign.type.ContextType;
 import com.vendo.aws_service.port.presign.PresignQueryPort;
-import com.vendo.aws_service.test_utils.builder.UserDataBuilder;
 import com.vendo.aws_service.test_utils.security.SecurityContextTestService;
 import com.vendo.core_lib.utils.AssertionUtils;
 import com.vendo.security_lib.exception.ExceptionResponse;
@@ -20,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,6 +32,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@EmbeddedKafka
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -45,8 +45,6 @@ public class InternalPresignControllerIntegrationTest {
 
     @MockitoBean
     private PresignQueryPort presignQueryPort;
-
-    private final User user = UserDataBuilder.withAllFields().build();
 
     @Nested
     class PresignedTests {

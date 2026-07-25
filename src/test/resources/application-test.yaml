@@ -28,3 +28,13 @@ endpoints:
     internal:
       - /internal/presign
 
+kafka:
+  events:
+    file:
+      deleted-event:
+        topic: "FILE_TEST_DELETED_TOPIC"
+        groupId: "file_test_deleted_group"
+        container-factory: "consumerContainerFactory"
+        properties:
+          auto-offset-reset: "latest"
+
