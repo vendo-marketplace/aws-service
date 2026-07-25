@@ -19,7 +19,7 @@ public class FileDeletedEventConsumer {
             properties = {"auto.offset.reset: ${kafka.events.file.deleted-event.properties.auto-offset-reset}"},
             containerFactory = "${kafka.events.file.deleted-event.container-factory}"
     )
-    private void listenFileDeletedEvent(String fileKey) {
+    public void listenFileDeletedEvent(String fileKey) {
         log.info("Received event for file deletion: {}", fileKey);
         fileCommandPort.delete(fileKey);
     }
