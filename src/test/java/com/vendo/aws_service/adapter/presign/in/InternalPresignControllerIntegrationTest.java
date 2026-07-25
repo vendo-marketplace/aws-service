@@ -1,7 +1,6 @@
 package com.vendo.aws_service.adapter.presign.in;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vendo.aws_service.domain.user.User;
 import com.vendo.aws_service.adapter.presign.in.dto.FileRequest;
 import com.vendo.aws_service.adapter.presign.in.dto.PresignRequest;
 import com.vendo.aws_service.adapter.presign.in.dto.PresignResponse;
@@ -9,7 +8,6 @@ import com.vendo.aws_service.domain.file.File;
 import com.vendo.aws_service.domain.presign.dto.PresignBody;
 import com.vendo.aws_service.domain.presign.type.ContextType;
 import com.vendo.aws_service.port.presign.PresignQueryPort;
-import com.vendo.aws_service.test_utils.builder.UserDataBuilder;
 import com.vendo.aws_service.test_utils.security.SecurityContextTestService;
 import com.vendo.core_lib.utils.AssertionUtils;
 import com.vendo.security_lib.exception.ExceptionResponse;
@@ -45,8 +43,6 @@ public class InternalPresignControllerIntegrationTest {
 
     @MockitoBean
     private PresignQueryPort presignQueryPort;
-
-    private final User user = UserDataBuilder.withAllFields().build();
 
     @Nested
     class PresignedTests {
