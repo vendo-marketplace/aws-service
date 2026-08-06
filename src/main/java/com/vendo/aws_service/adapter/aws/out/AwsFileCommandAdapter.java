@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectResponse;
 
 @Slf4j
 @Component
@@ -26,7 +27,9 @@ class AwsFileCommandAdapter implements FileCommandPort {
                 .build();
 
         try {
-            s3Client.deleteObject(request);
+            DeleteObjectResponse deleteObjectResponse = s3Client.deleteObject(request);
+            System.out.println(deleteObjectResponse.toString());
+            System.out.println(deleteObjectResponse);
         } catch (SdkException e) {
             log.error("Unable to delete file: {}.", e.getMessage());
             throw new AwsException("Something went wrong while deleting file.");
