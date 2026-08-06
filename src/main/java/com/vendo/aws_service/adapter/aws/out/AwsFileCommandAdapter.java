@@ -21,15 +21,13 @@ class AwsFileCommandAdapter implements FileCommandPort {
 
     @Override
     public void delete(String fileKey) {
+        System.out.println(fileKey);
         DeleteObjectRequest request = DeleteObjectRequest.builder()
                 .bucket(props.getS3().getBucketName())
                 .key(fileKey)
                 .build();
-
         try {
-            DeleteObjectResponse deleteObjectResponse = s3Client.deleteObject(request);
-            System.out.println(deleteObjectResponse.toString());
-            System.out.println(deleteObjectResponse);
+            s3Client.deleteObject(request);
         } catch (SdkException e) {
             log.error("Unable to delete file: {}.", e.getMessage());
             throw new AwsException("Something went wrong while deleting file.");
