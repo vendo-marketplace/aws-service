@@ -130,7 +130,7 @@ public class InternalPresignControllerIntegrationTest {
             assertThat(exceptionResponse.getCode()).isEqualTo(400);
             assertThat(exceptionResponse.getMessage()).isEqualTo("Validation failed.");
             assertThat(exceptionResponse.getErrors()).isNotNull();
-            assertThat(exceptionResponse.getErrors().get("type")).isEqualTo("Allowed types are: PRODUCT");
+            assertThat(exceptionResponse.getErrors().get("type")).isEqualTo("Allowed types are: PRODUCT, CATEGORY");
             assertThat(exceptionResponse.getPath()).isEqualTo("/internal/presign");
 
             verifyNoInteractions(presignQueryPort);
