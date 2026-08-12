@@ -152,13 +152,7 @@ java -jar target/aws-service.jar
 Swagger UI:
 
 ```
-http://localhost:9010/swagger-ui/index.html
-```
-
-OpenAPI specification:
-
-```
-http://localhost:9010/v3/api-docs
+http://194.163.130.14:8030/swagger-ui/index.html
 ```
 
 ---
