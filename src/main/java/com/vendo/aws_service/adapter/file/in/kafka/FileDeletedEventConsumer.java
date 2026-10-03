@@ -1,4 +1,4 @@
-package com.vendo.aws_service.adapter.file.out.kafka;
+package com.vendo.aws_service.adapter.file.in.kafka;
 
 import com.vendo.aws_service.port.file.FileCommandPort;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ public class FileDeletedEventConsumer {
 
     @KafkaListener(
             topics = "${kafka.events.file.deleted-event.topic}",
-            groupId = "${kafka.events.file.deleted-event.groupId}",
+            groupId = "awsFileDeletedEventGroupId",
             properties = {"auto.offset.reset: ${kafka.events.file.deleted-event.properties.auto-offset-reset}"},
             containerFactory = "${kafka.events.file.deleted-event.container-factory}"
     )
