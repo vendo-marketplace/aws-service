@@ -1,6 +1,6 @@
 package com.vendo.aws_service.adapter.security.in.filter.path;
 
-import com.vendo.aws_service.shared.props.PathProps;
+import com.vendo.security_starter.path.PathProps;
 import com.vendo.security_lib.resolver.AntPathResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
